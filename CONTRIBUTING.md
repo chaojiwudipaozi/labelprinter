@@ -51,10 +51,20 @@ dist/win-unpacked/标签打印工具站.exe --smoketest   # 输出 SMOKETEST_RES
 3. 复现步骤 + 期望结果 + 实际结果；
 4. 截图或 `SELFTEST_RESULT` 输出（打印问题尤其有用）。
 
-## 发版流程（维护者）
+## 发版与分发（维护者）
 
-安装包体积约 77 MB，**不要把 `.exe` 提交进仓库**（`.gitignore` 已忽略）；统一通过 **GitHub Releases** 分发，
-README 里的下载入口指向 `releases/latest`，因此永远指向最新版。
+**安装包不进入版本库**：体积约 77 MB，`.gitignore` 已忽略 `*.exe`——GitHub 单文件上限 100 MB，
+而且每次提交都会在 git 历史里永久累积体积（clone 越来越慢，且不可撤销）。
+
+分发方式任选：
+
+| 方式 | 做法 |
+| --- | --- |
+| **使用者自行打包**（README 采用的方式） | 按 README「桌面安装版（自行打包）」执行 `npm run pack`（免安装目录）或 `npm run dist`（安装包） |
+| **线下/内网分发** | 维护者本地 `npm run dist` 出包后直接发给同事；或放进软件数据目录 `data\installer\`，让局域网内的人从网页右上角「⬇ 下载安装包」取包 |
+| **GitHub Releases**（可选） | 想让项目页提供下载时，在 Actions 页面手动触发并填写 `release_tag`，CI 会构建并创建 Release；也可在 Releases 页面手动上传 exe |
+
+发版步骤：
 
 1. 改版本号与日志：`package.json` 的 `version`、`CHANGELOG.md`，并同步 `docs/` 手册里的版本号；
 2. 本地验证：`npm run sync-manual && npm run verify`；
@@ -66,13 +76,11 @@ README 里的下载入口指向 `releases/latest`，因此永远指向最新版�
    git tag v1.2.1
    git push origin v1.2.1
    ```
-4. GitHub Actions 会自动构建 NSIS 安装包并**创建 Release**（同时上传带版本号的和固定名 `LabelPrint-Setup.exe`）；
-5. 到 Releases 页面确认附件与 README 中的直链可用：
-   - `.../releases/latest` → 最新版页面
-   - `.../releases/latest/download/LabelPrint-Setup.exe` → 点击即下载最新版（依赖固定文件名）
+4. 推 tag 后 CI 会**构建安装包并上传为构建产物（Artifact）**，但**不会**自动创建 Release；
+5. 只有你确实想公开提供下载时，再到 Actions → CI → **Run workflow** 填 `release_tag`（如 `v1.2.1`），
+   这时会额外创建 Release 并挂上 `LabelPrint-Setup-<version>.exe` 与固定名 `LabelPrint-Setup.exe`。
 
-> 想不跑 CI 直接发一版：在 Releases 页面 「Draft a new release」→ 新建 `vX.Y.Z` 标签 →
-> 把 `dist/LabelPrint-Setup-<version>.exe` 拖进 Assets，并**再拖一份改名为 `LabelPrint-Setup.exe`**（保证固定直链可用）。
+> README 中**没有**安装包下载入口，使用者按「自行打包」章节自建；默认也不对外发布安装包。
 
 ## 提 Pull Request
 

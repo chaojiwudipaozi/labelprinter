@@ -13,30 +13,11 @@
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D6.svg)](#系统要求)
 [![Electron](https://img.shields.io/badge/desktop-Electron%2032-47848F.svg)](https://www.electronjs.org/)
 
-[⬇ 下载安装版](#下载安装版) · [功能特性](#功能特性) · [快速开始](#快速开始) · [工作原理](#工作原理) · [目录结构](#目录结构) · [开发与打包](#开发与打包) · [文档](#文档)
+[功能特性](#功能特性) · [快速开始](#快速开始) · [工作原理](#工作原理) · [目录结构](#目录结构) · [开发与打包](#开发与打包) · [文档](#文档)
 
 </div>
 
 ---
-
-## 下载安装版
-
-不想折腾 Node.js 环境？直接下载 Windows 安装包（约 77 MB），双击安装即用：
-
-| 方式 | 链接 | 说明 |
-| --- | --- | --- |
-| ⬇ **下载最新版**（推荐） | **[Releases · latest](https://github.com/chaojiwudipaozi/labelprinter/releases/latest)** | 打开后在 **Assets** 里下载 `LabelPrint-Setup-*.exe` |
-| 🚀 直接下载（固定文件名） | [LabelPrint-Setup.exe](https://github.com/chaojiwudipaozi/labelprinter/releases/latest/download/LabelPrint-Setup.exe) | 点开即开始下载最新版；依赖发布时使用了固定文件名（见下） |
-| 📦 全部历史版本 | [Releases 列表](https://github.com/chaojiwudipaozi/labelprinter/releases) | 需要旧版本时使用 |
-
-```text
-# 想固定版本号直链下载（把 v1.2.1 换成目标版本）：
-https://github.com/chaojiwudipaozi/labelprinter/releases/download/v1.2.1/LabelPrint-Setup-1.2.1.exe
-```
-
-> **系统要求**：Windows 10 / 11（64 位）。安装后数据目录为 `%APPDATA%\label-print-site\data`，**卸载不会删除标签模板**。
-> **已经装过旧版？** 不用重新下载安装包——软件内「版本日志」页签 → **🔄 检查更新** 即可增量更新网页界面层；
-> 也可以在自己电脑上放一份安装包，让别人从网页右上角的 **「⬇ 下载安装包」** 取包。
 
 <!-- 截图占位：把界面截图放到 docs/images/ 后，删掉注释并改成实际文件名
 <p align="center"><img src="docs/images/screenshot-main.png" alt="界面预览" width="860"></p>
@@ -92,7 +73,7 @@ https://github.com/chaojiwudipaozi/labelprinter/releases/download/v1.2.1/LabelPr
 - 桌面版：`npm run dist` 打出 NSIS 安装包，装上即用、卸载不删数据
 - **增量更新**：网页界面层（`public/**`、文档）可热更新，只需从局域网里一台装有新版的电脑拉取变化文件；
   主程序层（Electron/内置服务/系统脚本）仍走完整安装包
-- 网页右上角「⬇ 下载安装包」：服务器上放一份安装包，局域网内任意电脑一键下载
+- 网页右上角「⬇ 下载安装包」：把自己打好的安装包放进数据目录 `data\installer\`，局域网内任意电脑即可一键下载（无需 U 盘分发）
 
 ## 快速开始
 
@@ -119,17 +100,36 @@ npm start          # 默认 http://localhost:11235
 npm run lan        # 放行入站端口（同时解除可能存在的 node.exe 阻止规则）
 ```
 
-### 桌面安装版
+### 桌面安装版（自行打包）
 
-不想自己打包就直接下载已发布的安装包：[**Releases · latest**](https://github.com/chaojiwudipaozi/labelprinter/releases/latest)；
-需要自己出包时：
+本项目**不提供预编译的安装包**，需要桌面版时按下面步骤自己打包（Windows 环境）：
 
 ```bash
-npm run pack       # 免安装目录：dist/win-unpacked/
-npm run dist       # NSIS 安装包：dist/LabelPrint-Setup-<version>.exe
+npm install        # 首次：安装依赖（含 Electron 二进制，约 100 MB，需联网）
+npm run pack       # 产出免安装目录 dist/win-unpacked/ → 双击「标签打印工具站.exe」即用
+npm run dist       # 产出 NSIS 安装包 dist/LabelPrint-Setup-<version>.exe（可分发给同事安装）
 ```
 
-安装后双击桌面快捷方式即可，数据目录在 `%APPDATA%\label-print-site\data`（卸载不删除）。
+打包要点：
+
+- 请在 **Windows** 上打包（`npm run dist` 使用 Windows 打包链，产出 x64 安装包）；
+- `npm run dist` 会先自动执行 `predist → npm run sync-manual`，把 `docs/` 文档同步进 `public/docs/`；
+- 公司网络下载 Electron 失败时，先设镜像再安装：
+
+  ```bat
+  set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/
+  npm install
+  ```
+
+- 打完包用内置自检确认产物正常：
+
+  ```bat
+  dist\win-unpacked\标签打印工具站.exe --selftest     :: 输出 SELFTEST_RESULT {...}
+  dist\win-unpacked\标签打印工具站.exe --smoketest    :: 真实打开窗口，输出 SMOKETEST_RESULT {...}
+  ```
+
+- 安装版数据目录为 `%APPDATA%\label-print-site\data`，**卸载不会删除标签模板**；
+- 打好的安装包可以放进 `data\installer\`，局域网内其他人就能从网页右上角「⬇ 下载安装包」取包（见「部署与升级」）。
 
 ### 五分钟上手
 
