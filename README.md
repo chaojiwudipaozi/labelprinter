@@ -13,11 +13,30 @@
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D6.svg)](#系统要求)
 [![Electron](https://img.shields.io/badge/desktop-Electron%2032-47848F.svg)](https://www.electronjs.org/)
 
-[功能特性](#功能特性) · [快速开始](#快速开始) · [工作原理](#工作原理) · [目录结构](#目录结构) · [开发与打包](#开发与打包) · [文档](#文档)
+[⬇ 下载安装版](#下载安装版) · [功能特性](#功能特性) · [快速开始](#快速开始) · [工作原理](#工作原理) · [目录结构](#目录结构) · [开发与打包](#开发与打包) · [文档](#文档)
 
 </div>
 
 ---
+
+## 下载安装版
+
+不想折腾 Node.js 环境？直接下载 Windows 安装包（约 77 MB），双击安装即用：
+
+| 方式 | 链接 | 说明 |
+| --- | --- | --- |
+| ⬇ **下载最新版**（推荐） | **[Releases · latest](https://github.com/chaojiwudipaozi/labelprinter/releases/latest)** | 打开后在 **Assets** 里下载 `LabelPrint-Setup-*.exe` |
+| 🚀 直接下载（固定文件名） | [LabelPrint-Setup.exe](https://github.com/chaojiwudipaozi/labelprinter/releases/latest/download/LabelPrint-Setup.exe) | 点开即开始下载最新版；依赖发布时使用了固定文件名（见下） |
+| 📦 全部历史版本 | [Releases 列表](https://github.com/chaojiwudipaozi/labelprinter/releases) | 需要旧版本时使用 |
+
+```text
+# 想固定版本号直链下载（把 v1.2.1 换成目标版本）：
+https://github.com/chaojiwudipaozi/labelprinter/releases/download/v1.2.1/LabelPrint-Setup-1.2.1.exe
+```
+
+> **系统要求**：Windows 10 / 11（64 位）。安装后数据目录为 `%APPDATA%\label-print-site\data`，**卸载不会删除标签模板**。
+> **已经装过旧版？** 不用重新下载安装包——软件内「版本日志」页签 → **🔄 检查更新** 即可增量更新网页界面层；
+> 也可以在自己电脑上放一份安装包，让别人从网页右上角的 **「⬇ 下载安装包」** 取包。
 
 <!-- 截图占位：把界面截图放到 docs/images/ 后，删掉注释并改成实际文件名
 <p align="center"><img src="docs/images/screenshot-main.png" alt="界面预览" width="860"></p>
@@ -101,6 +120,9 @@ npm run lan        # 放行入站端口（同时解除可能存在的 node.exe �
 ```
 
 ### 桌面安装版
+
+不想自己打包就直接下载已发布的安装包：[**Releases · latest**](https://github.com/chaojiwudipaozi/labelprinter/releases/latest)；
+需要自己出包时：
 
 ```bash
 npm run pack       # 免安装目录：dist/win-unpacked/

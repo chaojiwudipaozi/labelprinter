@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
   pull_request:
   workflow_dispatch:
 
@@ -29,12 +30,14 @@ jobs:
       - name: 运行自检
         run: npm run verify
 
-  # 打 tag（v1.2.1 等）时构建 Windows 安装包并上传为构建产物
-  build-installer:
-    name: 构建 Windows 安装包
+  # 打 tag（如 v1.2.1）时：构建 Windows 安装包 → 上传构建产物 → 自动发布 Release
+  release:
+    name: 构建并发布安装包
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: windows-latest
     needs: verify
+    permissions:
+      contents: write          # 自动创建 Release 需要写权限
     steps:
       - uses: actions/checkout@v4
 
@@ -52,16 +55,39 @@ jobs:
           # 未配置代码签名证书时跳过签名，避免构建失败
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
 
+      # 额外复制一份「固定文件名」安装包：
+      # 这样 README 里的直链 .../releases/latest/download/LabelPrint-Setup.exe 永远指向最新版
+      - name: 生成固定文件名的安装包
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem dist -Filter 'LabelPrint-Setup-*.exe' | Select-Object -First 1
+          if (-not $exe) { throw '未找到安装包，构建可能失败' }
+          Copy-Item $exe.FullName (Join-Path dist 'LabelPrint-Setup.exe') -Force
+          Get-ChildItem dist -Filter '*.exe' | Select-Object Name, Length
+
       - name: 主程序自检
+        shell: pwsh
         run: |
           & "dist\win-unpacked\标签打印工具站.exe" --selftest | Select-String "SELFTEST_RESULT"
-        shell: pwsh
 
-      - name: 上传安装包
+      - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: LabelPrint-Setup
+          name: LabelPrint-Setup-${{ github.ref_name }}
           path: |
             dist/*.exe
             dist/*.exe.blockmap
           if-no-files-found: error
+
+      - name: 发布 Release 并挂载安装包
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/LabelPrint-Setup-*.exe
+            dist/*.exe.blockmap
+          generate_release_notes: true
+          body: |
+            Windows 安装包（NSIS）：下载 `LabelPrint-Setup-*.exe` 直接安装。
+
+            已安装旧版的用户**无需重装**：软件内「版本日志」页签 →「🔄 检查更新」可增量更新界面层；
+            README 里的固定直链（`.../releases/latest/download/LabelPrint-Setup.exe`）始终指向本页最新版。

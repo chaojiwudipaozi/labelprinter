@@ -51,6 +51,29 @@ dist/win-unpacked/标签打印工具站.exe --smoketest   # 输出 SMOKETEST_RES
 3. 复现步骤 + 期望结果 + 实际结果；
 4. 截图或 `SELFTEST_RESULT` 输出（打印问题尤其有用）。
 
+## 发版流程（维护者）
+
+安装包体积约 77 MB，**不要把 `.exe` 提交进仓库**（`.gitignore` 已忽略）；统一通过 **GitHub Releases** 分发，
+README 里的下载入口指向 `releases/latest`，因此永远指向最新版。
+
+1. 改版本号与日志：`package.json` 的 `version`、`CHANGELOG.md`，并同步 `docs/` 手册里的版本号；
+2. 本地验证：`npm run sync-manual && npm run verify`；
+3. 提交并打 tag（tag 形如 `v1.2.1`）：
+   ```bash
+   git add -A
+   git commit -m "chore(release): v1.2.1"
+   git push
+   git tag v1.2.1
+   git push origin v1.2.1
+   ```
+4. GitHub Actions 会自动构建 NSIS 安装包并**创建 Release**（同时上传带版本号的和固定名 `LabelPrint-Setup.exe`）；
+5. 到 Releases 页面确认附件与 README 中的直链可用：
+   - `.../releases/latest` → 最新版页面
+   - `.../releases/latest/download/LabelPrint-Setup.exe` → 点击即下载最新版（依赖固定文件名）
+
+> 想不跑 CI 直接发一版：在 Releases 页面 「Draft a new release」→ 新建 `vX.Y.Z` 标签 →
+> 把 `dist/LabelPrint-Setup-<version>.exe` 拖进 Assets，并**再拖一份改名为 `LabelPrint-Setup.exe`**（保证固定直链可用）。
+
 ## 提 Pull Request
 
 1. Fork 本仓库并从 `main` 开分支（如 `feat/multi-sheet-import`）；
