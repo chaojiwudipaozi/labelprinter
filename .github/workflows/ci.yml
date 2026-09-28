@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # 每次提交/PR：语法检查 + 启动服务探活关键接口（不依赖 Electron，速度快）
+  verify:
+    name: 自检（语法 + 服务探活）
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # --ignore-scripts 跳过 Electron 二进制下载（自检不需要），CI 更快更稳
+      - name: 安装依赖
+        run: npm ci --ignore-scripts
+
+      - name: 同步应用内文档
+        run: npm run sync-manual
+
+      - name: 运行自检
+        run: npm run verify
+
+  # 打 tag（v1.2.1 等）时构建 Windows 安装包并上传为构建产物
+  build-installer:
+    name: 构建 Windows 安装包
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: windows-latest
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 打包（NSIS 安装包）
+        run: npm run dist
+        env:
+          # 未配置代码签名证书时跳过签名，避免构建失败
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: 主程序自检
+        run: |
+          & "dist\win-unpacked\标签打印工具站.exe" --selftest | Select-String "SELFTEST_RESULT"
+        shell: pwsh
+
+      - name: 上传安装包
+        uses: actions/upload-artifact@v4
+        with:
+          name: LabelPrint-Setup
+          path: |
+            dist/*.exe
+            dist/*.exe.blockmap
+          if-no-files-found: error

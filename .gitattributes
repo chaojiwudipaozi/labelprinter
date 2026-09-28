@@ -1,0 +1,20 @@
+# 默认按文本处理，交由 Git 自动判断换行
+* text=auto
+
+# Windows 脚本必须保持 CRLF，否则 PowerShell/BAT 可能报错
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# 二进制文件不做换行转换与 diff
+*.ico binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.exe binary
+*.woff binary
+*.woff2 binary
+
+# Markdown / JSON 用 LF，方便 diff
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 使用手册（安装、设计标签、Excel、打印、常见问题）
+    url: https://github.com/chaojiwudipaozi/labelprinter/blob/main/docs/使用手册.md
+    about: 大部分「怎么用」的问题在这里都能找到答案
+  - name: 🛠 部署与排查（端口、局域网、打包、目录结构）
+    url: https://github.com/chaojiwudipaozi/labelprinter/blob/main/docs/使用说明.md
+    about: 部署、局域网访问、打印机看不到等运维问题

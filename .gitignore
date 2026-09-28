@@ -1,0 +1,39 @@
+# 依赖
+node_modules/
+
+# 打包产物（npm run pack / npm run dist）
+dist/
+out/
+*.exe
+*.blockmap
+builder-debug.yml
+
+# 运行期数据：标签模板、热更新覆盖目录、打印临时文件
+# 说明：服务端会在首次运行时自动创建 data/，无需提交
+data/
+
+# 本地开发记录（不上传）
+context.json
+任务.txt
+
+# 日志与临时文件
+*.log
+npm-debug.log*
+yarn-error.log*
+*.tmp
+*.temp
+
+# 编辑器 / 系统
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 环境变量
+.env
+.env.local
+
+# 说明：public/docs/ 内的文档是 npm run sync-manual 的**同步产物**，
+# 为了让 clone 后不执行任何脚本也能正常使用「使用手册/版本日志」，这里仍然提交。

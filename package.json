@@ -1,0 +1,99 @@
+{
+  "name": "label-print-site",
+  "version": "1.2.1",
+  "description": "标签打印工具站：Excel 导入识别（多工作表合并）、可视化标签设计（含表格/二维码/条码/日期时间）、模板管理、打印机识别与静默打印；网页版 + Windows 桌面安装版",
+  "author": "Label Print Station",
+  "license": "MIT",
+  "main": "electron/main.js",
+  "keywords": [
+    "label-print",
+    "label-designer",
+    "barcode",
+    "qrcode",
+    "excel",
+    "xlsx",
+    "electron",
+    "express",
+    "zebra",
+    "silent-print",
+    "标签打印",
+    "条码打印"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaojiwudipaozi/labelprinter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chaojiwudipaozi/labelprinter/issues"
+  },
+  "homepage": "https://github.com/chaojiwudipaozi/labelprinter#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "web": "node server.js",
+    "electron": "electron .",
+    "lan": "powershell -ExecutionPolicy Bypass -File scripts/fix-lan-firewall.ps1 -UnblockNode",
+    "sync-manual": "node scripts/sync-manual.js",
+    "verify": "node scripts/verify.js",
+    "predist": "node scripts/sync-manual.js",
+    "pack": "electron-builder --win --dir",
+    "dist": "electron-builder --win nsis"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "electron": "^32.2.7",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.labelprint.station",
+    "productName": "标签打印工具站",
+    "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "lib/**/*",
+      "public/**/*",
+      "scripts/**/*",
+      "server.js",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "scripts/**"
+    ],
+    "extraResources": [
+      {
+        "from": "public/docs",
+        "to": "docs"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "LabelPrint-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "标签打印工具站",
+      "language": "2052",
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

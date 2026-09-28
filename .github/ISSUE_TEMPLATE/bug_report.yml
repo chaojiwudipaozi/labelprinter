@@ -1,0 +1,88 @@
+name: Bug 反馈
+description: 报告一个可以复现的问题（打印异常、导入异常、界面异常等）
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！请尽量把信息填全，尤其是**版本号**与**复现步骤**，能大幅缩短定位时间。
+        提交前可以先看一眼 [使用手册的常见问题](../blob/main/docs/使用手册.md)。
+
+  - type: input
+    id: version
+    attributes:
+      label: 软件版本
+      description: 界面左上角徽标（形如 V1.2.1）；桌面版可再用菜单「帮助 → 关于本工具」核对
+      placeholder: V1.2.1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: edition
+    attributes:
+      label: 使用方式
+      options:
+        - 桌面安装版（LabelPrint-Setup-*.exe）
+        - 网页版（npm start 或局域网访问）
+        - 免安装版（dist/win-unpacked）
+    validations:
+      required: true
+
+  - type: input
+    id: env
+    attributes:
+      label: 运行环境
+      description: 操作系统 + 浏览器 + Node 版本（Node 版本可在版本徽标悬停提示里看到）
+      placeholder: Windows 11 23H2 / Edge 129 / Node v20.11.0
+    validations:
+      required: true
+
+  - type: input
+    id: printer
+    attributes:
+      label: 打印机型号（打印相关必填）
+      placeholder: ZDesigner ZD888-203dpi ZPL / HP LaserJet M1005 ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 从打开软件开始，逐步写到问题出现（能用示例数据复现最好）
+      placeholder: |
+        1. 导入含 2 个工作表的 Excel（第一行为字段名）
+        2. 双击文本元素绑定「物料名称」
+        3. 点「批量打印」→ …
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果 vs 实际结果
+      placeholder: |
+        期望：标签上显示为空
+        实际：打印出来出现了 {批号}
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: 截图 / 日志（可选）
+      description: |
+        截图直接拖进来即可；桌面版可附上自检输出（把输出贴进来，别上传含真实数据的文件）：
+        `dist\win-unpacked\标签打印工具站.exe --selftest`
+      render: text
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 隐私确认
+      options:
+        - label: 我已确认截图/日志中不含真实的公司名、物料编号、内网 IP 等敏感信息
+          required: true
